@@ -21,13 +21,22 @@ app.post('/', function (req, res) {
     request(url, function (err, response, body) {
         if (err) {
             console.log(err)
-            res.render('index', { error: err })
+            return res.render('index', { message: null, error: "we did not connect to the api please try again" })
 
         } else {
             console.log('body:', body);
             let weather = JSON.parse(body);
-            let message = `its ${weather.main.temp} in ${cityVar}`
-            console.log(message);
+
+            if (weather.main == undefined) {
+                return res.render('index', { message: null, error: "Please retry. Your city is non-existent" })
+            } else {
+                let message = `Its ${weather.main.temp} degrees  in ${cityVar}`
+                return res.render('index', { message: message, error: null })
+
+            }
+
+
+
         }
     });
 
