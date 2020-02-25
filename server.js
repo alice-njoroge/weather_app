@@ -12,17 +12,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 
-app.get('/', (req, res) => res.render('index'))
+app.get('/', (req, res) => res.render('index', { error: null }))
 
 app.post('/', function (req, res) {
 
     let cityVar = req.body.city;
-    let url = `http://api.openweathermap.org/data/2.5/weather?q=${cityVar}&appid=${apiKey}`
-    request(url, function (err, response, weather) {
+    let url = `http://api.openweathermap.org/data/2.5/weather?q=${cityVar}&appid=${apiKey}&units=metric`
+    request(url, function (err, response, body) {
         if (err) {
-            console.log('error:', err);
+            console.log(err)
+            res.render('index', { error: err })
+
         } else {
-            console.log('body:', weather);
+            console.log('body:', body);
+            let weather = JSON.parse(body);
+            let message = `its ${weather.main.temp} in ${cityVar}`
+            console.log(message);
         }
     });
 
